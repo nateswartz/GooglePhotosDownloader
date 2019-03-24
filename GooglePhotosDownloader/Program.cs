@@ -20,6 +20,14 @@ namespace GooglePhotosDownloader
                 {
                     var photos = await photosClient.GetFullPhotoListAsync();
                     Console.Write(photos.Count());
+
+                    var imageDownloader = new ImageLoader();
+                    var i = 0;
+                    foreach (var photoUrl in photos)
+                    {
+                        await imageDownloader.SaveImageAsync($"test{i}", photoUrl);
+                        i++;
+                    }
                     Console.ReadLine();
                 }
             }

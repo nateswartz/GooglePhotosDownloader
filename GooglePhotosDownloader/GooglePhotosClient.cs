@@ -34,7 +34,7 @@ namespace GooglePhotosDownloader
             {
                 Console.WriteLine(item.Id);
                 Console.WriteLine(item.BaseUrl);
-                photoList.Add(item.BaseUrl);
+                photoList.Add($"{item.BaseUrl}=w{item.MediaMetadata.Width}-h{item.MediaMetadata.Height}");
             }
 
             return photoList;

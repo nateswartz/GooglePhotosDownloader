@@ -24,7 +24,7 @@ namespace GooglePhotosDownloader.Models
         [JsonProperty("mimeType")]
         public string MimeType { get; set; }
         [JsonProperty("mediaMetadata")]
-        public object MediaMetadata { get; set; }
+        public MediaMetadata MediaMetadata { get; set; }
         [JsonProperty("contributorInfo")]
         public ContributorInfo ContributorInfo { get; set; }
         [JsonProperty("filename")]
