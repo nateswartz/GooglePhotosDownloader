@@ -16,17 +16,15 @@ namespace GooglePhotosDownloader
             {
                 var accessToken = await authClient.GetAuthTokenAsync(refreshToken);
 
-                using (var photosClient = new GooglePhotosClient(accessToken))
+                using (var mediaClient = new GoogleMediaClient(accessToken))
                 {
-                    var photos = await photosClient.GetFullPhotoListAsync();
-                    Console.Write(photos.Count());
+                    var items = await mediaClient.GetFullMediaListAsync();
+                    Console.Write(items.Count());
 
-                    var imageDownloader = new ImageLoader();
-                    var i = 0;
-                    foreach (var photoUrl in photos)
+                    var fileDownloader = new FileDownloader();
+                    foreach (var item in items)
                     {
-                        await imageDownloader.SaveImageAsync($"test{i}", photoUrl);
-                        i++;
+                        await fileDownloader.SaveFileAsync(item);
                     }
                     Console.ReadLine();
                 }

@@ -29,6 +29,14 @@ namespace GooglePhotosDownloader.Models
         public ContributorInfo ContributorInfo { get; set; }
         [JsonProperty("filename")]
         public string Filename { get; set; }
+
+        public string DownloadUrl
+        {
+            get
+            {
+                return $"{BaseUrl}=w{MediaMetadata.Width}-h{MediaMetadata.Height}";
+            } 
+        }
     }
 
     public class MediaMetadata

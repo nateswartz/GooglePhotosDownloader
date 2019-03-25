@@ -1,26 +1,28 @@
-﻿using System.Drawing;
-using System.Drawing.Imaging;
+﻿using GooglePhotosDownloader.Models;
+using System;
+using System.Drawing;
 using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace GooglePhotosDownloader
 {
-    public class ImageLoader
+    public class FileDownloader
     {
         private HttpClient _client;
 
-        public ImageLoader()
+        public FileDownloader()
         {
             _client = new HttpClient();
         }
 
-        public async Task SaveImageAsync(string filename, string uri)
+        public async Task SaveFileAsync(MediaItem item)
         {
-            var response = await _client.GetAsync(uri);
+            var response = await _client.GetAsync(item.DownloadUrl);
             var content = await response.Content.ReadAsStreamAsync();
             using (var image = new Bitmap(content))
             {
-                image.Save($"{filename}.jpg", ImageFormat.Jpeg);
+                Console.WriteLine($"Saving {item.Filename}");
+                image.Save(item.Filename);
             }
         }
     }
