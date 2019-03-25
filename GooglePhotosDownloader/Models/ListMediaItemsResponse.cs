@@ -34,7 +34,14 @@ namespace GooglePhotosDownloader.Models
         {
             get
             {
-                return $"{BaseUrl}=w{MediaMetadata.Width}-h{MediaMetadata.Height}";
+                if (MediaMetadata.Photo != null)
+                {
+                    return $"{BaseUrl}=d";
+                }
+                else
+                {
+                    return $"{BaseUrl}=dv";
+                }
             } 
         }
     }
