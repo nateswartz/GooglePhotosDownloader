@@ -15,12 +15,12 @@ namespace GooglePhotosDownloader
             _client = new HttpClient();
         }
 
-        public async Task SaveFileAsync(MediaItem item)
+        public async Task SaveFileAsync(MediaItem item, string outputFolder)
         {
             var response = await _client.GetAsync(item.DownloadUrl);
             var content = await response.Content.ReadAsByteArrayAsync();
             Console.WriteLine($"Saving {item.Filename}");
-            await File.WriteAllBytesAsync(item.Filename, content);
+            await File.WriteAllBytesAsync(Path.Combine(outputFolder, item.Filename), content);
         }
     }
 }
