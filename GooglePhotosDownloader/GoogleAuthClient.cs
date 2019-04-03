@@ -44,8 +44,8 @@ namespace GooglePhotosDownloader
             }
             catch (Exception e)
             {
-                var tmp = e;
-                return null;
+                Console.Write(e);
+                throw;
             }
 
         }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GooglePhotosDownloader
 {
-    public class FileDownloader
+    public class FileDownloader : IDisposable
     {
         private HttpClient _client;
 
@@ -19,8 +19,17 @@ namespace GooglePhotosDownloader
         {
             var response = await _client.GetAsync(item.DownloadUrl);
             var content = await response.Content.ReadAsByteArrayAsync();
-            Console.WriteLine($"Saving {item.Filename}");
-            await File.WriteAllBytesAsync(Path.Combine(outputFolder, item.Filename), content);
+            var timestamp = item.MediaMetadata.CreationTime.Substring(0, 10).Replace('-', '_');
+            var year = timestamp.Substring(0, 4);
+            var type = item.MediaMetadata.Video != null ? "Videos" : "Pictures";
+            var fileName = $"{timestamp}_{item.Filename}";
+            Directory.CreateDirectory(Path.Combine(outputFolder, type, year));
+            await File.WriteAllBytesAsync(Path.Combine(outputFolder, type, year, fileName), content);
+        }
+
+        public void Dispose()
+        {
+            _client.Dispose();
         }
     }
 }

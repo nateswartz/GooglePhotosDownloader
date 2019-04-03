@@ -38,8 +38,6 @@ namespace GooglePhotosDownloader
                 itemList.AddRange(items.mediaItems);
                 nextPageToken = items.nextPageToken;
 
-                Console.WriteLine($"Got items - {nextPageToken}");
-
             } while (!string.IsNullOrEmpty(nextPageToken));
 
             return itemList;
