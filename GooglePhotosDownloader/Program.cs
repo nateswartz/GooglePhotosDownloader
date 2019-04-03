@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -45,12 +44,9 @@ namespace GooglePhotosDownloader
                     using (var fileDownloader = new FileDownloader())
                     {
                         foreach (var item in items)
-                        {
-                            if (!File.Exists(item.Filename))
-                            {
-                                Console.WriteLine($"Saving {item.Filename}...");
-                                await fileDownloader.SaveFileAsync(item, outputDir);
-                            }
+                        {            
+                            Console.WriteLine($"Saving {item.Filename}...");
+                            await fileDownloader.SaveFileIfNewAsync(item, outputDir);
                         }
                     }
                     Console.ReadLine();
