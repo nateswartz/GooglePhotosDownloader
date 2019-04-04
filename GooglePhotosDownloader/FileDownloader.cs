@@ -9,31 +9,48 @@ namespace GooglePhotosDownloader
     public class FileDownloader : IDisposable
     {
         private HttpClient _client;
+        private string _outputDir;
 
-        public FileDownloader()
+        public FileDownloader(string outputDir)
         {
             _client = new HttpClient();
+            _outputDir = outputDir;
         }
 
-        public async Task SaveFileIfNewAsync(MediaItem item, string outputFolder)
+        public bool FileExists(MediaItem item)
         {
-            var timestamp = item.MediaMetadata.CreationTime.Substring(0, 10).Replace('-', '_');
-            var year = timestamp.Substring(0, 4);
-            var type = item.MediaMetadata.Video != null ? "Videos" : "Pictures";
-            var fileName = $"{timestamp}_{item.Filename}";
-            var destination = Path.Combine(outputFolder, type, year);
-            Directory.CreateDirectory(destination);
-
-            if (!File.Exists(Path.Combine(destination, fileName)))
+            if (File.Exists(GetFullDestinationPath(item)))
             {
-                var response = await _client.GetAsync(item.DownloadUrl);
-                var content = await response.Content.ReadAsByteArrayAsync();
-                await File.WriteAllBytesAsync(Path.Combine(destination, fileName), content);
+                return true;
             }
             else
             {
-                Console.WriteLine($"Skipping {item.Filename}, file already exists...");
+                return false;
             }
+        }
+
+        public async Task SaveFileAsync(MediaItem item)
+        {
+            Directory.CreateDirectory(GetDestinationFolder(item));
+
+            var response = await _client.GetAsync(item.DownloadUrl);
+            var content = await response.Content.ReadAsByteArrayAsync();
+            await File.WriteAllBytesAsync(GetFullDestinationPath(item), content);  
+        }
+
+        private string GetFullDestinationPath(MediaItem item)
+        {
+            var dir = GetDestinationFolder(item);
+            var timestamp = item.MediaMetadata.CreationTime.Substring(0, 10).Replace('-', '_');
+            var fileName = $"{timestamp}_{item.Filename}";
+            return Path.Combine(dir, fileName);
+        }
+
+        private string GetDestinationFolder(MediaItem item)
+        {
+            var year = item.MediaMetadata.CreationTime.Substring(0, 4);
+            var type = item.MediaMetadata.Video != null ? "Videos" : "Pictures";
+            return Path.Combine(_outputDir, type, year);
         }
 
         public void Dispose()

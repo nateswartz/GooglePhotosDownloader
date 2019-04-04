@@ -30,23 +30,31 @@ namespace GooglePhotosDownloader
 
         private static async Task DownloadPhotosForAccount(string clientId, string clientSecret, string refreshToken, string outputDir)
         {
-
             using (var authClient = new GoogleAuthClient(clientId, clientSecret))
             {
                 var accessToken = await authClient.GetAuthTokenAsync(refreshToken);
-
+                
                 using (var mediaClient = new GoogleMediaClient(accessToken))
                 {
+                    Console.WriteLine($"Getting items for token {refreshToken}...");
+
                     var items = await mediaClient.GetFullMediaListAsync();
 
                     Console.WriteLine($"Found {items.Count()} items. Beginning download...");
 
-                    using (var fileDownloader = new FileDownloader())
+                    using (var fileDownloader = new FileDownloader(outputDir))
                     {
                         foreach (var item in items)
                         {            
-                            Console.WriteLine($"Saving {item.Filename}...");
-                            await fileDownloader.SaveFileIfNewAsync(item, outputDir);
+                            if (!fileDownloader.FileExists(item))
+                            {
+                                Console.WriteLine($"Saving {item.Filename}...");
+                                await fileDownloader.SaveFileAsync(item);
+                            }
+                            else
+                            {
+                                Console.WriteLine($"Skipping {item.Filename}, file already exists...");
+                            }
                         }
                     }
                     Console.ReadLine();
